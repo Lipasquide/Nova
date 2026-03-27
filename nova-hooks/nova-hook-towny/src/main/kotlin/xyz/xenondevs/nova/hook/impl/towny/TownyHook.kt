@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack
 import xyz.xenondevs.nova.api.protection.ProtectionIntegration
 import xyz.xenondevs.nova.api.protection.ProtectionIntegration.ExecutionMode
 import xyz.xenondevs.nova.integration.Hook
-import xyz.xenondevs.nova.util.FakeOnlinePlayer
 
 @Hook(plugins = ["Towny"])
 internal object TownyHook : ProtectionIntegration {
@@ -34,7 +33,9 @@ internal object TownyHook : ProtectionIntegration {
     override fun canHurtEntity(player: OfflinePlayer, entity: Entity, item: ItemStack?) =
         hasPermission(player, entity.location, TownyPermission.ActionType.DESTROY)
     
+    // Towny offers no OfflinePlayer API, FakeOnlinePlayer breaks as tries to query LuckPerms with it directly
+    // see: https://github.com/xenondevs/Nova/issues/791
     private fun hasPermission(player: OfflinePlayer, location: Location, actionType: TownyPermission.ActionType) =
-        PlayerCacheUtil.getCachePermission(FakeOnlinePlayer.create(player, location), location, location.block.type, actionType)
+        player.player?.let { PlayerCacheUtil.getCachePermission(it, location, location.block.type, actionType) } ?: false
     
 }
