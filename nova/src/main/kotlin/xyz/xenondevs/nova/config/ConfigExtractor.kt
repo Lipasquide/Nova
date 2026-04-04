@@ -17,6 +17,7 @@ import xyz.xenondevs.nova.util.data.NodeWalkDecision
 import xyz.xenondevs.nova.util.data.deepEquals
 import xyz.xenondevs.nova.util.data.get
 import xyz.xenondevs.nova.util.data.remove
+import xyz.xenondevs.nova.util.data.resolveSafe
 import xyz.xenondevs.nova.util.data.set
 import xyz.xenondevs.nova.util.data.walk
 import java.io.ByteArrayOutputStream

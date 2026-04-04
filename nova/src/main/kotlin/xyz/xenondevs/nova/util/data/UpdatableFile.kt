@@ -66,7 +66,7 @@ internal object UpdatableFile {
             .filter(filter)
             .forEach { from ->
                 val relativePath = from.relativeTo(fromDir).invariantSeparatorsPathString
-                val to = toDir.resolve(relativePath)
+                val to = toDir.resolveSafe(relativePath)
                 load(from, to)
                 existingPaths.add(to)
             }

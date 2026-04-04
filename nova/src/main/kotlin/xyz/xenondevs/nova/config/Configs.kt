@@ -21,6 +21,7 @@ import xyz.xenondevs.nova.initialize.InternalInitStage
 import xyz.xenondevs.nova.serialization.configurate.NOVA_CONFIGURATE_SERIALIZERS
 import xyz.xenondevs.nova.serialization.kotlinx.KeySerializer
 import xyz.xenondevs.nova.util.Key
+import xyz.xenondevs.nova.util.data.resolveSafe
 import xyz.xenondevs.nova.util.data.useZip
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -80,7 +81,7 @@ object Configs {
                 .forEach { config ->
                     val relPath = config.relativeTo(configsDir).invariantSeparatorsPathString
                     val configId = Key.key(namespace, relPath.substringBeforeLast('.'))
-                    extractConfig(config, dataFolder.resolve("configs").resolve(relPath), configId)
+                    extractConfig(config, dataFolder.resolve("configs").resolveSafe(relPath), configId)
                 }
         }
     }

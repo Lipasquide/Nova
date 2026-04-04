@@ -6,6 +6,7 @@ import xyz.xenondevs.commons.gson.getOrPut
 import xyz.xenondevs.commons.gson.parseJson
 import xyz.xenondevs.commons.gson.writeToFile
 import xyz.xenondevs.nova.resources.builder.ResourcePackBuilder
+import xyz.xenondevs.nova.util.data.resolveSafe
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
@@ -31,7 +32,7 @@ class AtlasTask(private val builder: ResourcePackBuilder) : PackTask {
         }
         
         sources.forEach {
-            val file = builder.resolve("assets/minecraft/atlases/${it.key}.json")
+            val file = builder.resolve("assets/minecraft/atlases/").resolveSafe("${it.key}.json")
             file.parent.createDirectories()
             val atlasesObj = file.takeIf(Path::exists)?.parseJson() as? JsonObject ?: JsonObject()
             val sourcesJson = atlasesObj.getOrPut("sources", ::JsonArray)

@@ -5,6 +5,7 @@ import xyz.xenondevs.nova.resources.builder.AssetPack
 import xyz.xenondevs.nova.resources.builder.PNGMetadataRemover
 import xyz.xenondevs.nova.resources.builder.ResourceFilter
 import xyz.xenondevs.nova.resources.builder.ResourcePackBuilder
+import xyz.xenondevs.nova.util.data.resolveSafe
 import xyz.xenondevs.nova.util.data.useZip
 import java.nio.file.Path
 import kotlin.io.path.CopyActionResult
@@ -71,7 +72,7 @@ class ExtractTask(private val builder: ResourcePackBuilder) : PackTask {
         val namespace = assetPack.namespace
         fun extractDir(sourceDir: Path, dirName: String) {
             sourceDir.copyToRecursively(
-                target = namespaceDir.resolve("$dirName/"),
+                target = namespaceDir.resolveSafe("$dirName/"),
                 followLinks = false,
             ) { source, target ->
                 if (source.isDirectory())
@@ -97,7 +98,7 @@ class ExtractTask(private val builder: ResourcePackBuilder) : PackTask {
         assetPack.texturesDir?.let { extractDir(it, "textures") }
         assetPack.fontsDir?.let { extractDir(it, "font") }
         assetPack.soundsDir?.let { extractDir(it, "sounds") }
-        assetPack.soundsFile?.copyTo(namespaceDir.resolve("sounds.json"))
+        assetPack.soundsFile?.copyTo(namespaceDir.resolveSafe("sounds.json"))
     }
     
 }
