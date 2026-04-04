@@ -3,6 +3,7 @@ package xyz.xenondevs.nova
 import xyz.xenondevs.nova.addon.AddonBootstrapper
 import xyz.xenondevs.nova.addon.id
 import xyz.xenondevs.nova.config.PermanentStorage
+import xyz.xenondevs.nova.util.data.resolveSafe
 import java.nio.file.FileVisitResult
 import java.nio.file.Path
 import kotlin.io.path.CopyActionResult
@@ -70,7 +71,7 @@ internal object LegacyDataFolderMigrator {
             configsNova.walk()
                 .filter { it.isRegularFile() }
                 .forEach {
-                    it.copyTo(it.parent.parent.resolve(it.name), true)
+                    it.copyTo(it.parent.parent.resolveSafe(it.name), true)
                     it.deleteRecursively()
                 }
             configsNova.deleteRecursively()
@@ -119,7 +120,7 @@ internal object LegacyDataFolderMigrator {
                     val dataFolder = determineDataFolder(legacyFile)
                     if (dataFolder != null) {
                         val relDirPath = legacyFile.relativeTo(legacyDir).parent?.invariantSeparatorsPathString ?: ""
-                        val newFile = dataFolder.resolve(dir).resolve(relDirPath).resolve(legacyFile.name.substringAfter('_'))
+                        val newFile = dataFolder.resolveSafe(dir).resolveSafe(relDirPath).resolveSafe(legacyFile.name.substringAfter('_'))
                         newFile.parent.createDirectories()
                         legacyFile.copyTo(newFile, true)
                         legacyFile.deleteExisting()

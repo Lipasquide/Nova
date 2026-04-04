@@ -15,6 +15,7 @@ import xyz.xenondevs.nova.resources.builder.task.PackTask
 import xyz.xenondevs.nova.resources.builder.task.basepack.merger.FileMerger
 import xyz.xenondevs.nova.resources.lookup.ResourceLookups
 import xyz.xenondevs.nova.util.data.readJson
+import xyz.xenondevs.nova.util.data.resolveSafe
 import xyz.xenondevs.nova.util.data.useZip
 import xyz.xenondevs.nova.world.block.state.model.BackingStateConfigType
 import java.io.File
@@ -128,7 +129,7 @@ class BasePacks internal constructor(internal val builder: ResourcePackBuilder) 
                     
                     // normalize assets dir name to "assets"
                     val relPath = "assets/" + sourceFile.relativeTo(assetsDir).invariantSeparatorsPathString
-                    val destFile = builder.resolve(relPath)
+                    val destFile = builder.resolve(".").resolveSafe(relPath)
                     
                     destFile.parent.createDirectories()
                     val fileMerger = mergers.firstOrNull { it.acceptsFile(relPath) }

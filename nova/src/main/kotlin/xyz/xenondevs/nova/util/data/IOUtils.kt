@@ -21,7 +21,42 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
 
 fun InputStream.transferTo(output: OutputStream, amount: Int) {
-    output.write(this.readNBytes(amount))
+    var remaining = amount
+    val buffer = ByteArray(minOf(remaining, 4096))
+    while (remaining > 0) {
+        val read = read(buffer, 0, minOf(remaining, buffer.size))
+        if (read == -1) break
+        output.write(buffer, 0, read)
+        remaining -= read
+    }
+}
+
+/**
+ * Resolves the given [other] path against this path and verifies that the resulting path is still
+ * within this path.
+ *
+ * @throws IllegalArgumentException If the resulting path is not within this path.
+ */
+internal fun Path.resolveSafe(other: String): Path {
+    val resolved = resolve(other).normalize()
+    if (!resolved.startsWith(normalize())) {
+        throw IllegalArgumentException("Potential path traversal attempt: $other")
+    }
+    return resolved
+}
+
+/**
+ * Resolves the given [other] path against this path and verifies that the resulting path is still
+ * within this path.
+ *
+ * @throws IllegalArgumentException If the resulting path is not within this path.
+ */
+internal fun Path.resolveSafe(other: Path): Path {
+    val resolved = resolve(other).normalize()
+    if (!resolved.startsWith(normalize())) {
+        throw IllegalArgumentException("Potential path traversal attempt: $other")
+    }
+    return resolved
 }
 
 inline fun <T> use(vararg closeable: Closeable, block: () -> T): T {

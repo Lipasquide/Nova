@@ -35,6 +35,8 @@ internal object PNGMetadataRemover {
     private fun processMetadataChunks(input: DataInputStream, output: DataOutputStream) {
         while (true) {
             val length = input.readInt()
+            if (length < 0) throw IllegalStateException("Invalid PNG chunk length: $length")
+
             val type = input.readInt()
             if (type == IDAT_TYPE) {
                 output.writeInt(length)
@@ -46,7 +48,13 @@ internal object PNGMetadataRemover {
                 input.transferTo(output, length)
                 output.writeInt(input.readInt()) // CRC
             } else {
-                input.skipBytes(length + 4) // extra 4 bytes for CRC
+                // skip chunk data + 4 bytes for CRC
+                var remaining = length.toLong() + 4
+                while (remaining > 0) {
+                    val skipped = input.skip(remaining)
+                    if (skipped <= 0) break
+                    remaining -= skipped
+                }
             }
         }
     }
